@@ -24,5 +24,30 @@ function generateDESKey() {
  * @returns {string} Kết quả
  */
 function runDES(algo, mode, key, action, input) {
-    // TODO: implement
+    // Kiểm tra khóa có tồn tại hay không
+    if (!key) {
+        throw new Error("Thiếu khóa. Vui lòng nhập khóa.");
+    }
+
+    // chọn thuật toán
+    let cipher;
+    if (algo === "des") {
+        cipher = CryptoJS.DES;
+    } else if (algo === "3des") {
+        cipher = CryptoJS.TripleDES;
+    } else {
+        throw new Error("Thuật toán không hợp lệ: " + algo);
+    }
+
+    // chọn chế độ
+    let cipherMode;
+    if (mode === "cbc") {
+        cipherMode = CryptoJS.mode.CBC;
+    } else if (mode === "ecb") {
+        cipherMode = CryptoJS.mode.ECB;
+    } else {
+        throw new Error("Chế độ không hợp lệ: " + mode);
+    }
+
+    // TODO: Xử lý encrypt và decrypt
 }
