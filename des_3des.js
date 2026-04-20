@@ -9,7 +9,9 @@
  * @returns {string} Chuỗi hex
  */
 function generateDESKey() {
-    // TODO: implement
+    // Tạo khóa 24 byte - 8 byte (64 bit) cho DES và 24 byte (192 bit) cho 3DES
+    const randomBytes = CryptoJS.lib.WordArray.random(24);
+    return CryptoJS.enc.Hex.stringify(randomBytes);
 }
 
 /**
