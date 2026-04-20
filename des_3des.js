@@ -50,4 +50,26 @@ function runDES(algo, mode, key, action, input) {
     }
 
     // TODO: Xử lý encrypt và decrypt
+    // Parse khóa sang WordArray
+    const keyParsed = CryptoJS.enc.Utf8.parse(key);
+
+    // Cấu hình các tham số chung
+    const options = {
+        mode: cipherMode,
+        padding: CryptoJS.pad.Pkcs7,
+    };
+
+    // CBC cần IV - lấy 8 byte đầu tiên của khóa làm IV
+    if (mode === "cbc") {
+        const ivString = key.substring(0, 8).padEnd(8, '0'); // Đảm bảo IV có độ dài 8 byte
+        options.iv = CryptoJS.enc.Utf8.parse(ivString);
+    }
+
+    if (action === "encrypt") {
+        // Mã hóa và trả về kết quả dưới dạng chuỗi Base64
+        const encrypted = cipher.encrypt(input, keyParsed, options);
+        return encrypted.toString();
+    }
+
+
 }
