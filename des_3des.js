@@ -69,6 +69,21 @@ function runDES(algo, mode, key, action, input) {
         // Mã hóa và trả về kết quả dưới dạng chuỗi Base64
         const encrypted = cipher.encrypt(input, keyParsed, options);
         return encrypted.toString();
+    } else if (action === "decrypt") {
+        // Giải mã - cần parse input từ Base64
+        const decrypted = cipher.decrypt(input, keyParsed, options);
+        const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+
+        // Kiểm tra nếu giải mã thành công - kết quả có hop lệ hay không
+        if (!plaintext) {
+            throw new Error(
+                "Giải mã thất bại. Vui lòng kiểm tra lại:\n" +
+                "1. Ciphertext có đúng định dạng Base64 không.\n" +
+                "2. Khóa có đúng không (đặc biệt là độ dài và ký tự).\n" +
+                "3. Thuật toán và chế độ CBC/ECB có khớp với lúc mã hóa không."
+            );
+        }
+        return plaintext;
     }
 
 
