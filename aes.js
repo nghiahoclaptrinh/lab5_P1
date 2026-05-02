@@ -62,8 +62,50 @@ const AESModule = {
     
 
     decrypt: function (ciphertextInput, keyInput) {
-        // sẽ làm ở commit sau
+    if (!ciphertextInput || ciphertextInput.trim() === "") {
+        throw new Error("Ciphertext không được để trống.");
     }
+
+    const key = validateAESKey(keyInput);
+
+    const parts = ciphertextInput.trim().split(":");
+
+    if (parts.length !== 2) {
+        throw new Error("Ciphertext sai định dạng. Định dạng đúng là ivHex:cipherHex.");
+    }
+
+    const ivHex = parts[0];
+    const cipherHex = parts[1];
+
+    if (!/^[0-9a-fA-F]+$/.test(ivHex) || ivHex.length !== 32) {
+        throw new Error("IV không hợp lệ. IV phải là 32 ký tự Hex.");
+    }
+
+    if (!/^[0-9a-fA-F]+$/.test(cipherHex)) {
+        throw new Error("Ciphertext không hợp lệ. Ciphertext phải là chuỗi Hex.");
+    }
+
+    const iv = CryptoJS.enc.Hex.parse(ivHex);
+    const ciphertext = CryptoJS.enc.Hex.parse(cipherHex);
+
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+        ciphertext: ciphertext
+    });
+
+    const decrypted = CryptoJS.AES.decrypt(cipherParams, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    const plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+
+    if (!plaintext) {
+        throw new Error("Giải mã thất bại. Key hoặc ciphertext không đúng.");
+    }
+
+    return plaintext;
+}
 };
 
 window.AESModule = AESModule;
