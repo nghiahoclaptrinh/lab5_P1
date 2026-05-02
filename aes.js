@@ -38,8 +38,28 @@ const AESModule = {
     },
 
     encrypt: function (plaintext, keyInput) {
-        // sẽ làm ở commit sau
-    },
+    if (!plaintext || plaintext.trim() === "") {
+        throw new Error("Plaintext không được để trống.");
+    }
+
+    const key = validateAESKey(keyInput);
+
+    // CBC cần IV 16 bytes
+    const iv = CryptoJS.lib.WordArray.random(16);
+
+    const encrypted = CryptoJS.AES.encrypt(plaintext, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+    });
+
+    const ivHex = iv.toString(CryptoJS.enc.Hex);
+    const cipherHex = encrypted.ciphertext.toString(CryptoJS.enc.Hex);
+
+    // Lưu cả IV và ciphertext để giải mã được
+    return ivHex + ":" + cipherHex;
+},
+    
 
     decrypt: function (ciphertextInput, keyInput) {
         // sẽ làm ở commit sau
